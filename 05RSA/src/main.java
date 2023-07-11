@@ -29,20 +29,41 @@ public class Main {
         
         byte[] bufferPlano = leerLinea(System.in);
         
+        System.out.println("3.- Seleccione el modo de cifrado: ");
+        System.out.println("    a. Cifrar con clave pública");
+        System.out.println("    b. Cifrar con clave privada");
+        System.out.print("Ingrese su opción: ");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String opcion = br.readLine();
+        
         Cipher cifrador = Cipher.getInstance("RSA", "BC");
+        Cipher descifrador = Cipher.getInstance("RSA", "BC");
         
-        cifrador.init(Cipher.ENCRYPT_MODE, clavePrivada);
+        if (opcion.equals("a")) {
+            cifrador.init(Cipher.ENCRYPT_MODE, clavePublica);
+            descifrador.init(Cipher.DECRYPT_MODE, clavePrivada);
+            System.out.println("Cifrando con clave pública y descifrando con clave privada...");
+        } else if (opcion.equals("b")) {
+            cifrador.init(Cipher.ENCRYPT_MODE, clavePrivada);
+            descifrador.init(Cipher.DECRYPT_MODE, clavePublica);
+            System.out.println("Cifrando con clave privada y descifrando con clave pública...");
+        } else {
+            System.out.println("Opción inválida. Saliendo del programa.");
+            return;
+        }
         
-        System.out.println("3.- Ciframos con la clave privada: ");
+        System.out.println("Texto a cifrar: ");
+        mostrarBytes(bufferPlano);
+        System.out.println("\n");
+        
         byte[] bufferCifrado = cifrador.doFinal(bufferPlano);
+        
         System.out.println("Texto Cifrado: ");
         mostrarBytes(bufferCifrado);
         System.out.println("\n");
         
-        cifrador.init(Cipher.DECRYPT_MODE, clavePublica);
+        byte[] bufferPlano2 = descifrador.doFinal(bufferCifrado);
         
-        System.out.println("4.- Desciframos con la clave pública: ");
-        byte[] bufferPlano2 = cifrador.doFinal(bufferCifrado);
         System.out.println("Texto Descifrado: ");
         mostrarBytes(bufferPlano2);
         System.out.println("\n");
@@ -70,4 +91,3 @@ public class Main {
         System.out.write(buffer, 0, buffer.length);
     }
 }
-
